@@ -1,0 +1,80 @@
+
+- name: install installation dependencies
+  dnf:
+    name:
+      - unzip
+    state: latest
+
+- name: download and install consul binary
+  unarchive:
+    src: https://releases.hashicorp.com/consul/1.7.3/consul_1.7.3_linux_amd64.zip
+    dest: /usr/local/bin
+    remote_src: yes
+
+- name: disable firewalld
+  systemd:
+    name: firewalld
+    enabled: no
+    state: stopped
+
+# this playbook was designed to configure a server ONLY running vault, selinux should not be disabled if this is not the case
+- name: disable selinux
+  selinux:
+    state: disabled
+
+- name: add /usr/local/bin to the path globally
+  lineinfile:
+    path: /etc/profile
+    line: 'export PATH=$PATH:/usr/local/bin'
+
+- name: create consul group
+  group:
+    name: consul
+    state: present
+
+- name: add consul user
+  user:
+    name: consul
+    shell: '/bin/false'
+    groups: consul
+
+- name: create /etc/consul.d/
+  file:
+    path: /etc/consul.d
+    owner: consul
+    group: consul
+    state: directory   
+
+- name: create /opt/consul
+  file:
+    path: /opt/consul
+    owner: consul
+    group: consul
+    state: directory
+
+- name: add systemd unit
+  copy:
+    src: source/consul.service
+    dest: /etc/systemd/system/consul.service
+    
+- name: daemon reload
+  command: systemctl daemon-reload
+
+- name: generate consul key
+  command: /usr/local/bin/consul keygen
+  register: consul_key
+
+- name: copy consul config
+  template:
+    src: source/server.hcl
+    dest: /etc/consul.d/server.hcl
+    owner: consul
+    group: consul
+
+- name: start and enable consul
+  systemd:
+    name: consul
+    enabled: yes
+    state: restarted
+
+

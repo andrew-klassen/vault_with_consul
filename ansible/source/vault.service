@@ -1,0 +1,25 @@
+[Unit]
+Description=vault service
+Requires=network-online.target
+After=network-online.target
+ConditionFileNotEmpty=/etc/vault.d/config.hcl
+
+[Service]
+User=vault
+EnvironmentFile=-/etc/sysconfig/vault
+Environment=GOMAXPROCS=2
+Restart=on-failure
+ExecStart=/usr/local/bin/vault server -config=/etc/vault.d/config.hcl
+LimitMEMLOCK=infinity
+ExecReload=/bin/kill --signal HUP $MAINPID
+ExecReload=/bin/kill -HUP $MAINPID
+KillSignal=SIGINT
+RestartSec=20
+TimeoutStopSec=30
+StartLimitInterval=60
+StartLimitIntervalSec=60
+LimitNOFILE=65536
+LimitMEMLOCK=infinity
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,56 @@
+
+- name: download and install vault binary
+  unarchive:
+    src: '{{ vault_binary }}'
+    dest: /usr/local/bin
+    remote_src: yes
+
+- name: add vault user
+  user:
+    name: vault
+    shell: '/bin/false'
+
+- name: create vault directories
+  file:
+    path: '{{ item }}'
+    state: directory
+    owner: vault
+  with_items:
+    - /etc/vault.d
+    - /var/log/vault
+
+- name: template the vault config
+  template:
+    src: source/config.hcl
+    dest: /etc/vault.d/config.hcl
+
+- name: set private key permissions and ownership
+  file:
+    path: '{{ private_key }}'
+    owner: vault
+    group: root
+    mode: '0400'
+
+- name: set cert permissions and ownership
+  file:
+    path: '{{ cert }}'
+    owner: vault
+    group: root
+
+- name: allow vault to bind to port 443
+  command: setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/vault
+
+- name: daemon reload
+  command: systemctl daemon-reload
+
+- name: add the vault service
+  template:
+    src: source/vault.service
+    dest: /etc/systemd/system/vault.service
+
+- name: start and enable vault service
+  service:
+    name: vault
+    state: restarted
+    enabled: yes
+

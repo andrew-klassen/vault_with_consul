@@ -7,6 +7,12 @@ if [[ $EUID -ne 0 ]]; then
 	exit 1
 fi
 
+echo ''
+echo "Make sure you have reviewed the varibles in ansible/vars."
+echo "If not, exit this script and do so now, no changes were"
+echo "made."
+echo ''
+
 # login info for ansible
 read -p "Ssh username (needs sudo power): " ssh_username
 read -s -p "Ssh password: " ssh_password

@@ -5,11 +5,11 @@ storage "consul" {
 }
 
 listener "tcp" {
-  address     = "10.221.132.203:443"
-  tls_cert_file = "/etc/vault.d/pki/vault.crt"
-  tls_key_file = "/etc/vault.d/pki/vault.key"
+  address     = "0.0.0.0:443"
+  tls_cert_file = "{{ cert }}"
+  tls_key_file = "{{ private_key }}"
   tls_disable = 0
 }
-api_addr = "https://vault"
+api_addr = "{{ vault_url }}"
 ui = true
 

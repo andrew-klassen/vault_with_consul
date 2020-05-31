@@ -7,7 +7,7 @@
 
 - name: download and install consul binary
   unarchive:
-    src: https://releases.hashicorp.com/consul/1.7.3/consul_1.7.3_linux_amd64.zip
+    src: '{{ consul_binary }}'
     dest: /usr/local/bin
     remote_src: yes
 
@@ -76,5 +76,4 @@
     name: consul
     enabled: yes
     state: restarted
-
 

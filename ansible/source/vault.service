@@ -20,6 +20,8 @@ StartLimitInterval=60
 StartLimitIntervalSec=60
 LimitNOFILE=65536
 LimitMEMLOCK=infinity
+StandardOutput=/var/log/vault/output.log
+StandardError=/var/log/vault/error.log
 
 [Install]
 WantedBy=multi-user.target

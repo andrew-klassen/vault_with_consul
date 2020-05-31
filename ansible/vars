@@ -1,0 +1,5 @@
+private_key: '/etc/vault.d/pki/vault.key'
+cert: '/etc/vault.d/pki/vault.crt'
+consul_binary: 'https://releases.hashicorp.com/consul/1.7.3/consul_1.7.3_linux_amd64.zip'
+vault_binary: 'https://releases.hashicorp.com/vault/1.4.2/vault_1.4.2_linux_amd64.zip'
+vault_url: 'https://vault'
